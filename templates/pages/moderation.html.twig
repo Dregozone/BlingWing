@@ -1,0 +1,103 @@
+{% extends 'main.html.twig' %}
+
+{% block title -%}Moderation{%- endblock %}
+
+{% block content %}
+<article class="moderation">
+    <h1>Moderate pending reviews</h1>
+        {% for review in reviews %}
+            <form action="" method="post">
+                <table>
+                    <tr>
+                        <th>User</th>
+                        <td><a href="mailto:{{ review.guest.email }}">{{ review.guest.name }}</a> ({{ role[review.guest.type] }})</td>
+                        <th>Date</th>
+                        <td>{{ review.created | date("d/m/Y H:i") }}</td>
+                    </tr>
+                    <tr>
+                        <th>Restaurant</th>
+                        <td colspan="3">
+                            <select class="form-control form-control-sm" id="restaurant" name="restaurant" required>
+                                {% for restaurant in restaurants | sort((a, b) => a.name <=> b.name) %}
+                                <option value="/api/restaurants/{{ restaurant.id }}"{% if restaurant == review.restaurant %} selected{% endif %}>{{ restaurant.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>People</th>
+                        <td>
+                            <select class="form-control form-control-sm" id="size" name="size" required>
+                                {% for num in 1..10 %}
+                                <option value="{{num}}"{% if num == review.size %} selected{% endif %}>{{num}}</option>
+                                {% endfor %}
+                                <option value="11"{% if 11 == review.size %} selected{% endif %}>more than 10</option>
+                            </select>
+                        </td>
+                        <th>Occasion</th>
+                        <td>
+                            <select class="form-control form-control-sm" id="occasion" name="occasion" required>
+                                {% for key,value in occasion %}
+                                <option value="{{ key }}"{% if key == review.occasion %} selected{% endif %}>{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Food</th>
+                        <td>
+                            <select class="form-control form-control-sm" id="food" name="food" required>
+                                {% for key,value in food %}
+                                <option value="{{ key }}"{% if key == review.food %} selected{% endif %}>{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <th>Service</th>
+                        <td>
+                            <select class="form-control form-control-sm" id="service" name="service" required>
+                                {% for key,value in service %}
+                                <option value="{{ key }}"{% if key == review.service %} selected{% endif %}>{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Cleanliness</th>
+                        <td>
+                            <select class="form-control form-control-sm" id="cleanliness" name="cleanliness" required>
+                                {% for key,value in cleanliness %}
+                                <option value="{{ key }}"{% if key == review.cleanliness %} selected{% endif %}>{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <th>Value for money</th>
+                        <td>
+                            <select class="form-control form-control-sm" id="value" name="value" required>
+                                {% for key,value in value %}
+                                <option value="{{ key }}"{% if key == review.value %} selected{% endif %}>{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Comment</th>
+                        <td colspan="3">
+                            <textarea class="form-control form-control-sm" id="comment" name="comment" rows="8" cols="80" required>{{ review.comment }}</textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <td colspan="3">
+                            <input type="hidden" name="id" value="{{ review.id }}">
+                            <button type="submit" name="save" class="btn btn-success btn-sm">APPROVE + SAVE CHANGES</button>
+                            <button type="submit" name="skip" class="btn btn-secondary btn-sm">SKIP</button>
+                            <button type="submit" name="delete" class="btn btn-danger btn-sm">DELETE</button>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        {% endfor %}
+
+    <script src="/js/page.moderation.js"></script>
+</article>
+{% endblock %}

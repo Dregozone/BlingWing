@@ -1,0 +1,163 @@
+{% extends 'main.html.twig' %}
+
+{% block title -%}
+    Report
+{%- endblock %}
+
+{% block content %}
+<article class="stats">
+
+    <h1>Statistics</h1>
+
+    <form class="filter" method="get">
+        <p class="form-inline">
+            <label for="from">From</label>
+            <input class="form-control form-control-sm" type="date" id="from" name="from" value="{{ params.from | date("Y-m-d") }}">
+            <label for="until">Until</label>
+            <input class="form-control form-control-sm" type="date" id="until" name="until" value="{{ params.until | date("Y-m-d") }}">
+            <button type="submit" class="btn btn-primary btn-sm">Refresh</button>
+        </p>
+        <p>NOTE: Date parameters do not apply to “most recent” types of listings.</p>
+    </form>
+
+    <div class="container home">
+        <div class="row">
+            <div class="col col-sm-6">
+                <div class="card">
+                    <div class="card-header">
+                        <strong>Most active users</strong>
+                    </div>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Comments</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            {% for user in activeUsers %}
+                                <tr>
+                                    <td><a href="mailto:{{ user.email }}">{{ user.name }}</a></td>
+                                    <td>{{ user.num }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <strong>Most recent reviews</strong>
+                    </div>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for review in latestReviews %}
+                                <tr>
+                                    <td><a href="mailto:{{ review.guest.email }}">{{ review.guest.name }}</a></td>
+                                    <td>{{ review.created | date("d/m/Y H:i") }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <strong>Most common occasions</strong>
+                    </div>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Occasion</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for occ in commonOccasions %}
+                                <tr>
+                                    <td>{{ occasion[occ.name] | capitalize }}</td>
+                                    <td>{{ occ.sum }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col col-sm-6">
+                {% set lists = {
+                    "Top rated restaurants" : {
+                        data: topRestaurants,
+                        th: "Score",
+                        dataKey: "rating",
+                        round: 2,
+                        append : "%"
+                    },
+                    "Most reviewed restaurants" : {
+                        data: popularRestaurants,
+                        th: "Reviews",
+                        dataKey: "total",
+                        round: 0,
+                        append : ""
+                    },
+                    "Best restaurants by food" : {
+                        data: topRestaurantsByFood,
+                        th: "Rating",
+                        dataKey: "food",
+                        round: 2,
+                        append : "/5"
+                    },
+                    "Best restaurants by service" : {
+                        data: topRestaurantsByService,
+                        th: "Rating",
+                        dataKey: "service",
+                        round: 2,
+                        append : "/5"
+                    },
+                    "Best restaurants by cleanliness" : {
+                        data: topRestaurantsByCleanliness,
+                        th: "Rating",
+                        dataKey: "cleanliness",
+                        round: 2,
+                        append : "/5"
+                    },
+                    "Best restaurants by value for money" : {
+                        data: topRestaurantsByValue,
+                        th: "Rating",
+                        dataKey: "value",
+                        round: 2,
+                        append : "/5"
+                    },
+                } %}
+
+                {% for caption, list in lists %}
+                    <div class="card">
+                        <div class="card-header">
+                            <strong>{{ caption }}</strong>
+                        </div>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>{{ list.th }}</th>
+                                </tr>
+                            </thead>
+                                {% for restaurant in list.data %}
+                                    <tr>
+                                        <td><a href="/restaurants/{{ restaurant.slug }}">{{ restaurant.name }}</a></td>
+                                        <td>{{ restaurant[list.dataKey] | round(list.round) }}{{ list.append }}</td>
+                                    </tr>
+                                {% endfor %}
+                        </table>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+</article>
+{% endblock %}

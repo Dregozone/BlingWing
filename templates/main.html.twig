@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Scofe Restaurant Guide » {% block title -%}{%- endblock %}</title>
+
+        <meta charset="utf-8">
+        <meta httpequiv="x-ua-compatible" content="ie=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="icon" href="/favicon.svg" type="image/svg">
+
+        <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/css/main.css">
+    </head>
+    <body>
+        <header>
+            <div id="user">
+                {% if app.user and is_granted("ROLE_USER") %}
+                    Logged in as <strong>{{ app.user.name }}</strong>. <a class="logout" href="/logout">Logout</a>
+                {% else %}
+                    <a href="/login">Login</a>
+                {% endif %}
+            </div>
+
+            <div class="logo">
+                <img src="/img/logo.webp" alt="Scofe — Restaurant Reviews" width="140" height="100">
+            </div>
+
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/restaurants/">Restaurants</a></li>
+                    <li><a href="/review/">Write Review</a></li>
+
+                    {% if app.user and is_granted("ROLE_USER") %}
+                        <li>|</li>
+                        {% if is_granted("ROLE_MODERATOR") %}
+                            <li><a href="/moderation">Moderation</a></li>
+                        {% elseif is_granted("ROLE_ANALYST") %}
+                            <li><a href="/stats">Stats</a></li>
+                        {% endif %}
+                    {% endif %}
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            {% block content %}
+            {% endblock %}
+        </main>
+        <script type="text/javascript" src="/js/main.js"></script>
+    </body>
+</html>

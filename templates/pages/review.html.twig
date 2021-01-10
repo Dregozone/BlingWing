@@ -1,0 +1,121 @@
+{% extends 'main.html.twig' %}
+
+{% block title -%}
+    Write Review
+{%- endblock %}
+
+{% block content %}
+<article class="review">
+    <form action="" method="post" autocomplete="off">
+        <div class="fields">
+            <h1>Write a review</h1>
+
+            {% if not app.user %}
+                <h2>Your name</h2>
+
+                <div class="form-group">
+                    <label for="name">What’s your name?</label>
+                    <input type="text" class="form-control" id="name" name="name" autocomplete="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">What’s your e-mail adress?</label>
+                    <input type="email" class="form-control" id="email" name="email" autocomplete="email" required>
+                </div>
+
+                <h2>Your review</h2>
+            {% endif %}
+
+            <div class="form-group">
+                <label for="restaurant">Where did you eat?</label>
+                <select class="form-control" id="restaurant" name="restaurant" required>
+                    <option value="" selected disabled hidden>– please select –</option>
+                    {% for restaurant in restaurants | sort((a, b) => a.name <=> b.name) %}
+                    <option value="/api/restaurants/{{ restaurant.id }}">{{ restaurant.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="size">How many people were in your group, including yourself?</label>
+                <select class="form-control" id="size" name="size" required>
+                    <option value="" selected disabled hidden>– please select –</option>
+                    {% for num in 1..10 %}
+                    <option value="{{num}}">{{num}}</option>
+                    {% endfor %}
+                    <option value="11">more than 10</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="occasion">What was the occasion?</label>
+                <select class="form-control" id="occasion" name="occasion" required>
+                    <option value="" selected disabled hidden>– please select –</option>
+                    {% for key,value in occasion %}
+                    <option value="{{ key }}">{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="food">How would you rate the quality of the food?</label>
+                <select class="form-control" id="food" name="food" required>
+                    <option value="" selected disabled hidden>– please select –</option>
+                    {% for key,value in food %}
+                    <option value="{{ key }}">{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="service">How did you perceive the quality of service?</label>
+                <select class="form-control" id="service" name="service" required>
+                    <option value="" selected disabled hidden>– please select –</option>
+                    {% for key,value in service %}
+                    <option value="{{ key }}">{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="cleanliness">What was your impression regarding the cleanliness?</label>
+                <select class="form-control" id="cleanliness" name="cleanliness" required>
+                    <option value="" selected disabled hidden>– please select –</option>
+                    {% for key,value in cleanliness %}
+                    <option value="{{ key }}">{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="value">How do you feel about the value for money?</label>
+                <select class="form-control" id="value" name="value" required>
+                    <option value="" selected disabled hidden>– please select –</option>
+                    {% for key,value in value %}
+                    <option value="{{ key }}">{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="comment">What would you tell a friend about this restaurant? (optional)</label>
+                <textarea class="form-control" id="comment" name="comment" rows="8" cols="80"></textarea>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+
+        <div class="thankyou">
+            <h1>Thank you!</h1>
+            <p>Your review has been submitted and will now be reviewed.</p>
+            <p><a href="/">Proceed to home page.</a></p>
+        </div>
+    </form>
+
+
+    <script src="/js/page.review.js"></script>
+</article>
+
+{% endblock %}

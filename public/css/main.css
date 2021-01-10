@@ -1,0 +1,244 @@
+body {
+    font-family: Assistant, Arial, sans-serif;
+    background: url(/background.webp) top center no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+}
+
+header, main {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+
+h1 {
+    margin: 0 0 2rem;
+}
+
+h2 {
+    margin: 3rem 0 1.5rem;
+}
+
+h3 {
+    margin: 0;
+}
+
+a {
+    cursor: pointer;
+}
+
+header {
+    text-align: center;
+}
+
+header #user {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+header #user.loggedin .no, header #user:not(.loggedin) .yes {
+    display: none
+}
+
+header .logo {
+    margin: 2rem;
+}
+
+header nav ul {
+    list-style: none;
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+}
+
+header nav ul li {
+    margin: 0 1rem
+}
+
+main {
+    margin-top: 3rem;
+}
+
+form label {
+    cursor: pointer;
+    font-weight: bold;
+}
+
+article {
+    margin: 0 1rem 2rem;
+}
+
+table {
+    width: 100%;
+}
+
+table td, table th {
+    vertical-align: top;
+    padding: 0.2rem 0;
+}
+
+table th {
+    width: 1%;
+    white-space: nowrap;
+    padding-right: 3rem;
+}
+white-space: nowrap;
+
+table td.wide {
+    width: 99.9%;
+}
+table td.slim {
+    width: 1%;
+}
+
+/* Bootstrap fixes */
+
+.card .table {
+    margin: 0;
+}
+
+
+/* MACRO: rating() */
+
+.rating {
+    position: relative;
+    height: 50px;
+    width: 100px;
+}
+
+.rating::before {
+    position: absolute;
+    content: "";
+    height: 50px;
+    width: 100px;
+    background: url(/img/forks.svg) no-repeat;
+    background-size: 100%;
+    opacity: 0.2;
+}
+
+.rating div {
+    position: absolute;
+    content: "";
+    height: 50px;
+    background: url(/img/forks.svg) top left no-repeat;
+    background-size: 100px 50px;
+}
+
+
+/* Home page */
+
+.home .top10 td:nth-child(2) {
+    width: 1%;
+    white-space: nowrap;
+}
+
+/* Restaurants page */
+
+.restaurants .params label {
+    display: block;
+    font-weight: bold;
+    margin: 1rem 0 0.3rem;
+}
+
+.restaurants button {
+    margin-top: 1rem;
+}
+
+
+/* Single restaurant page  */
+
+article.restaurant ul {
+    margin: 0;
+    padding: 0;
+}
+
+article.restaurant li {
+    margin: 1rem 0;
+    padding: 1rem 0;
+    border-bottom: 1px solid #eee;
+    list-style: none;
+}
+
+/* Review page */
+
+article.review form.loggedin .anon {
+    display: none;
+}
+
+article.review form:not(.submitted) .thankyou, article.review form.submitted .fields {
+    display: none;
+}
+
+
+/* Stats page */
+
+article.stats .card {
+    margin-bottom: 1rem
+}
+
+article.stats .filter {
+    background: #f3f3f3;
+    border: 1px solid #ddd;
+    border-radius: 0.3rem;
+    padding: 1rem;
+    margin-bottom: 2rem;
+}
+
+article.stats .filter p {
+    margin: 0;
+}
+
+article.stats .filter p:last-child {
+    margin-top: 0.7rem;
+    font-size: 0.85rem;
+    color: #777;
+}
+
+article.stats .filter label {
+    display: inline-block;
+    margin-right: 1rem;
+}
+
+article.stats .filter input {
+    display: inline-block;
+    margin-right: 2rem;
+}
+
+
+/* Moderation page  */
+
+article.moderation form {
+    margin: 1rem 0;
+    padding: 1rem;
+    border: 1px solid #555;
+    list-style: none;
+}
+
+article.moderation button {
+    font-weight: 600;
+}
+
+article.moderation table th {
+    padding: 0.4rem 1rem 0 2rem;
+}
+
+article.moderation table th:first-child {
+    padding-left: 0;
+}
+
+article.moderation textarea {
+    height: 5rem;
+}
+
+article.moderation table td {
+    width: 30%;
+    padding: 0.4rem 0;
+}
+
+article.moderation form.moderated {
+    display: none;
+}

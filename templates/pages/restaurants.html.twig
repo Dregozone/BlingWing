@@ -1,0 +1,138 @@
+{% extends 'main.html.twig' %}
+
+{% block title -%}
+    Restaurant Search
+{%- endblock %}
+
+{% block content %}
+{% import "macros/rating.html.twig" as ma %}
+
+<article class="restaurants">
+    <h1>Our Restaurants</h1>
+
+    <div class="container">
+        <div class="row">
+            <div class="col col-md-4">
+                <div class="card params">
+                    <div class="card-header">
+                        <h4>Search</h4>
+                    </div>
+                    <form action="/restaurants" method="get" class="card-body">
+                        <label for="cuisine">Cuisine</label>
+                        <select class="form-control form-control-sm" id="cuisine" name="cuisine" required="required">
+                            <option value="0"{% if params.cuisine == 0 %} selected{% endif %}>(any)</option>
+                            {% for key, value in cuisine %}
+                                <option value="{{ key }}"{% if params.cuisine == key %} selected{% endif %}>{{ value }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label for="food">Quality of food</label>
+                        <select class="form-control form-control-sm" id="food" name="food" required="required">
+                            <option value="0"{% if params.food == 0 %} selected{% endif %}>(any)</option>
+                            {% for key, value in food %}
+                                <option value="{{ key }}"{% if params.food == key %} selected{% endif %}>{{ value }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label for="service">Quality of service</label>
+                        <select class="form-control form-control-sm" id="service" name="service" required="required">
+                            <option value="0"{% if params.service == 0 %} selected{% endif %}>(any)</option>
+                            {% for key, value in service %}
+                                <option value="{{ key }}"{% if params.service == key %} selected{% endif %}>{{ value }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label for="value">Value for money</label>
+                        <select class="form-control form-control-sm" id="value" name="value" required="required">
+                            <option value="0"{% if params.value == 0 %} selected{% endif %}>(any)</option>
+                            {% for key, value in value %}
+                                <option value="{{ key }}"{% if params.value == key %} selected{% endif %}>{{ value }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label for="cleanliness">Cleanliness</label>
+                        <select class="form-control form-control-sm" id="cleanliness" name="cleanliness" required="required">
+                            <option value="0"{% if params.cleanliness == 0 %} selected{% endif %}>(any)</option>
+                            {% for key, value in cleanliness %}
+                                <option value="{{ key }}"{% if params.cleanliness == key %} selected{% endif %}>{{ value }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label for="sort">Sort by</label>
+                        <select class="form-control form-control-sm" id="sort" name="sort" required="required">
+                            {% set options = {
+                                    rating : "best rating",
+                                    total : "most reviews",
+                                    newest : "most recently reviewed",
+                                    food : "best food",
+                                    service : "best service",
+                                    cleanliness : "best cleanliness",
+                                    value : "best value for money",
+                            } %}
+                            {% for key,value in options -%}
+                                <option value="{{ key }}"{% if params.sort == key %} selected{% endif %}>{{ value }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col col-md-8">
+                <div class="card results">
+                    <div class="card-header">
+                        <h4>Results</h4>
+                    </div>
+                    <div class="card-body">
+                        {% if restaurants %}
+                            <ul class="list-group list-group-flush">
+                                {% for restaurant in restaurants %}
+                                    <li class="list-group-item">
+                                        <table>
+                                            <tr>
+                                                <th>Restaurant</th>
+                                                <td><a href="restaurants/{{ restaurant.slug }}">{{ restaurant.name }}</a></td>
+                                                <td rowspan="6" class="slim">{{ ma.rating(restaurant.rating) }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Total reviews</th>
+                                                <td class="wide">{{ restaurant.total }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Overall rating</th>
+                                                <td class="wide">{{ restaurant.rating | round(2) }}%</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Quality of food</th>
+                                                <td class="wide">{{ restaurant.food | round(1) }}/5</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Quality of service</th>
+                                                <td>{{ restaurant.service | round(1) }}/5</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Value for money</th>
+                                                <td>{{ restaurant.value | round(1) }}/5</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Cleanliness</th>
+                                                <td>{{ restaurant.cleanliness | round(1) }}/5</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Last reviewed</th>
+                                                <td>{{ restaurant.newest | date("d/m/Y H:i") }}</td>
+                                            </tr>
+                                        </table>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>No restaurants found. Please try different search parameters.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</article>
+{% endblock %}

@@ -1,0 +1,19 @@
+security:
+  providers:
+    app:
+      entity:
+        class: App\Entity\User
+        property: id
+  encoders:
+    App\Entity\User:
+      algorithm: auto
+  firewalls:
+    main:
+      pattern: ^/
+      anonymous: lazy
+      guard:
+        authenticators:
+          - App\Security\LoginFormAuthenticator
+        entry_point: App\Security\LoginFormAuthenticator
+      logout:
+        path: app_logout

@@ -1,0 +1,80 @@
+{% extends 'main.html.twig' %}
+
+{% block title -%}
+    Home
+{%- endblock %}
+
+{% block content %}
+{% import "macros/rating.html.twig" as ma %}
+
+<article class="home">
+    <div class="container home">
+        <div class="row">
+
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>10 Latest Reviews</h3>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% for review in latestReviews %}
+                            <li class="list-group-item">
+                                <table>
+                                    <tr>
+                                        <th>Author</th>
+                                        <td>{{ review.guest.name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Date</th>
+                                        <td>{{ review.created | date("d/m/Y H:i") }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Restaurant</th>
+                                        <td><a href="restaurants/{{ review.restaurant.slug }}#{{ review.id }}">{{ review.restaurant.name }}</a></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Rating</th>
+                                        <td>food: {{ review.food }}/5, service {{ review.service }}/5, value for money {{ review.value }}/5, cleanliness {{ review.cleanliness }}/5</td>
+                                    </tr>
+                                </table>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Top 10 Restaurants</h3>
+                    </div>
+                    <ul class="list-group list-group-flush top10">
+
+                        {% for restaurant in topRestaurants %}
+                            <li class="list-group-item">
+                                <table>
+                                    <tr>
+                                        <td><strong><a href="/restaurants/{{ restaurant.slug }}">{{ restaurant.name }}</a></strong></td>
+                                        <td rowspan="3">
+                                            {{ ma.rating(restaurant.rating) }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Rating: {{ restaurant.rating | round(2) }}%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Total reviews: {{ restaurant.total }}</td>
+                                    </tr>
+                                </table>
+                            </li>
+
+                        {% endfor %}
+
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</article>
+{% endblock %}

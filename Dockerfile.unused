@@ -1,0 +1,15 @@
+FROM php:7.4-fpm-alpine
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+WORKDIR /srv
+COPY . /srv
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" && \
+    apk update && apk add libzip && apk add --virtual build-deps build-base gcc autoconf libzip-dev && \
+    pecl install apcu && \
+    docker-php-ext-install pdo_mysql zip && \
+    docker-php-ext-enable apcu && \
+    apk del build-deps && \
+    composer install --no-scripts --prefer-dist && \
+    rm -rf "$(composer config cache-dir)" "$(composer config data-dir)" && \
+    echo 'memory_limit = 256M' > /usr/local/etc/php/conf.d/docker-php-memlimit.ini && \
+    bin/console cache:clear && \
+    chown -R www-data: /srv
