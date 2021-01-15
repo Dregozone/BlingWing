@@ -146,4 +146,17 @@ abstract class AbstractController extends BaseAbstractController
             ->setMaxResults($num)
             ->getResult();
     }
+
+    protected function getTopItems(int $num = 10)
+    {
+        $params = $this->fixRestaurantParams($params);
+
+        $qb = $this->createRestaurantBaseQueryBuilder();
+
+        return $qb
+            ->getQuery()
+            ->setFirstResult(0)
+            ->setMaxResults($num)
+            ->getResult();
+    }
 }

@@ -1,0 +1,122 @@
+{% extends 'main.html.twig' %}
+
+{% block title -%}
+    Restaurant Search
+{%- endblock %}
+
+{% block content %}
+{% import "macros/rating.html.twig" as ma %}
+
+<article class="restaurants">
+    <h1>Bling Wing Collections</h1>
+
+    <div class="container">
+        <div class="row">
+            <div class="col col-md-4">
+                <div class="card params">
+                    <div class="card-header">
+                        <h4>Search</h4>
+                    </div>
+                    <form action="/restaurants" method="get" class="card-body">
+                        <label for="cuisine">Cuisine</label>
+                        <select class="form-control form-control-sm" id="cuisine" name="cuisine" required="required">
+                            <option value="0">(any)</option>
+                            {% for key, value in cuisine %}
+                                <option value="{{ key }}">{{ value }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label for="food">Quality of food</label>
+                        <select class="form-control form-control-sm" id="food" name="food" required="required">
+                            <option value="0">(any)</option>
+                            {% for key, value in food %}
+                                <option value="{{ key }}">{{ value }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label for="service">Quality of service</label>
+                        <select class="form-control form-control-sm" id="service" name="service" required="required">
+                            <option value="0">(any)</option>
+                            {% for key, value in service %}
+                                <option value="{{ key }}">{{ value }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label for="value">Value for money</label>
+                        <select class="form-control form-control-sm" id="value" name="value" required="required">
+                            <option value="0">(any)</option>
+                            {% for key, value in value %}
+                                <option value="{{ key }}">{{ value }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label for="cleanliness">Cleanliness</label>
+                        <select class="form-control form-control-sm" id="cleanliness" name="cleanliness" required="required">
+                            <option value="0">(any)</option>
+                            {% for key, value in cleanliness %}
+                                <option value="{{ key }}">{{ value }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label for="sort">Sort by</label>
+                        <select class="form-control form-control-sm" id="sort" name="sort" required="required">
+                            {% set options = {
+                                    rating : "best rating",
+                                    total : "most reviews",
+                                    newest : "most recently reviewed",
+                                    food : "best food",
+                                    service : "best service",
+                                    cleanliness : "best cleanliness",
+                                    value : "best value for money",
+                            } %}
+                            {% for key,value in options -%}
+                                <option value="{{ key }}">{{ value }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col col-md-8">
+                <div class="card results">
+                    <div class="card-header">
+                        <h4>Results</h4>
+                    </div>
+                    <div class="card-body">
+                        {% if collections %}
+                            <ul class="list-group list-group-flush">
+                                {% for collection in collections %}
+                                    <li class="list-group-item">
+                                        <table>
+                                            <tr>
+                                                <th>Collection</th>
+                                                <td><a href="collections/{{ collection.CollectionName }}">{{ collection.CollectionName }}</a></td>
+                                                <td rowspan="6" class="slim">
+                                                    <div class="productImage">
+                                                        <img src="/img/{{ collection.CollectionImage }}.webp" alt="{{ collection.CollectionImage }} - Product Image" width="140" height="100">
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Owner</th>
+                                                <td class="wide">{{ collection.CollectionOwner }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Total items</th>
+                                                <td class="wide">{{ collection.CollectionItemCount }}</td>
+                                            </tr>
+                                        </table>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>No collections found. Please try different search parameters.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</article>
+{% endblock %}

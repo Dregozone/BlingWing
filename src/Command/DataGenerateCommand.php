@@ -2,9 +2,9 @@
 
 namespace App\Command;
 
-use App\Entity\Restaurant;
-use App\Entity\User;
-use App\Entity\Review;
+use App\Entity\Item;
+use App\Entity\Member;
+use App\Entity\Collection;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -38,66 +38,109 @@ class DataGenerateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->entityManager->getConnection()->executeQuery("DELETE FROM user");
-        $this->entityManager->getConnection()->executeQuery("DELETE FROM restaurant");
-        $this->entityManager->getConnection()->executeQuery("DELETE FROM review");
+        $this->entityManager->getConnection()->executeQuery("DELETE FROM collection");
+        $this->entityManager->getConnection()->executeQuery("DELETE FROM item");
+        $this->entityManager->getConnection()->executeQuery("DELETE FROM member");
 
-        $users = $this->createUsers();
-        $this->createRestaurantsAndReviews($users, $output);
+        $members = $this->createMembers();
+        $collections = $this->createCollections($members);
+        $items = $this->createItems($collections);
+        
+        //$this->createCollectionsAndItems($members, $output);
 
         $this->entityManager->flush();
 
         return Command::SUCCESS;
     }
 
-    private function createUsers() {
+    private function createMembers() {
         $faker = FakerFactory::create("en_GB");
-        $users = [];
+        $members = [];
 
         for ($i=1; $i < 50; $i++) {
 
-            $user = new User();
-            $user->id = "fakeUser$i";
-            $user->email = $faker->email;
-            $user->name = $faker->name;
-            $user->salt = base64_encode(\random_bytes(20));
-            $user->password = base64_encode(\random_bytes(50));
-            $user->type = $faker->randomElement([User::TYPE_ANONYMOUS, User::TYPE_SUBSCRIBER]);
-            $this->entityManager->persist($user);
-            $users[] = $user;
+            $member = new Member();
+            $member->id = "fakeMember$i";
+            $member->email = $faker->email;
+            $member->title = $faker->name;
+            $member->firstName = $faker->name;
+            $member->lastName = $faker->name;
+            $member->salt = base64_encode(\random_bytes(20));
+            $member->password = base64_encode(\random_bytes(50));
+            $member->type = $faker->randomElement([Member::TYPE_ANONYMOUS, Member::TYPE_SUBSCRIBER]);
+            $this->entityManager->persist($member);
+            $members[] = $member;
         }
 
-        return $users;
+        return $members;
     }
 
-    private function createRestaurantsAndReviews($users, $output)
+    private function createItems($collections) {
+        $faker = FakerFactory::create("en_GB");
+        $items = [];
+
+        for ($i=1; $i < 50; $i++) {
+
+            $item = new Item();
+            $item->id = "fakeItem$i";
+            $item->name = $faker->name;
+            $item->price = RAND(1, 100);
+            $item->status = RAND(0,5);
+            $item->collection = $collections[0];
+            $this->entityManager->persist($item);
+            $items[] = $item;
+        }
+
+        return $items;
+    }
+
+    private function createCollections($members) {
+        $faker = FakerFactory::create("en_GB");
+        $collections = [];
+
+        for ($i=1; $i < 50; $i++) {
+
+            $collection = new Collection();
+            $collection->id = "fakeCollection$i";
+            $collection->name = $faker->name;
+            $collection->guest = $members[0];
+            $collection->image = $faker->name;
+            $this->entityManager->persist($collection);
+            $collections[] = $collection;
+        }
+
+        return $collections;
+    }
+
+    /*
+    private function createCollectionsAndItems($members, $output)
     {
         $faker = FakerFactory::create("en_GB");
         $slugger = new AsciiSlugger();
         $slugs = []; // collect generated to avoid duplicates
 
         for ($i = 0; $i < 150; $i++) {
-            $restaurant = new Restaurant();
+            $collection = new Collection();
 
             while (true) {
-                $restaurant->name = $faker->company;
-                $restaurant->slug = (string)$slugger->slug(\strtolower($restaurant->name));
+                $collection->name = $faker->company;
+                $collection->slug = (string)$slugger->slug(\strtolower($collection->name));
 
-                if (!isset($slugs[$restaurant->slug])) {
-                    $slugs[$restaurant->slug] = true;
+                if (!isset($slugs[$collection->slug])) {
+                    $slugs[$collection->slug] = true;
                     break;
                 }
             }
 
-            $restaurant->owner = $faker->name;
-            $restaurant->email = "info@{$restaurant->slug}.co.uk";
-            $restaurant->cuisine = $faker->randomElement(array_keys(Restaurant::CUISINE));
-            $restaurant->address = $faker->address;
-            $restaurant->phoneNumber = $faker->phoneNumber;
-            $restaurant->website = "https://{$restaurant->slug}.co.uk/";
-            $this->entityManager->persist($restaurant);
+            $collection->name = $faker->name;
+            //$collection->email = "info@{$collection->slug}.co.uk";
+            //$collection->cuisine = $faker->randomElement(array_keys(Collection::CUISINE));
+            //$order->address = $faker->address;
+            //$order->phoneNumber = $faker->phoneNumber;
+            //$order->website = "https://{$order->slug}.co.uk/";
+            $this->entityManager->persist($collection);
 
-            $output->writeln($restaurant->name);
+            $output->writeln($collection->name);
 
             // the distribution of a restaurant’s ratings should
             // roughly resemble a (skewed) bell curve
@@ -105,6 +148,7 @@ class DataGenerateCommand extends Command
             // and then gaussian random values per review
             $skew = round(mt_rand(-1, 2));
 
+            
             for ($j = 1; $j < mt_rand(100, 1000); $j++) {
                 $serviceRand = max(min(gaussRand(1, 5) + $skew, 5), 1);
                 $foodRand = max(min(gaussRand(1, 5) + $skew, 5), 1);
@@ -115,26 +159,27 @@ class DataGenerateCommand extends Command
                 $status = mt_rand(1, 70);
                 $status = $status > 4 ? 3 : $status;
 
-                $review = new Review();
-                $review->restaurant = $restaurant;
-                $review->status = $status;
-                $review->guest = $faker->randomElement($users);
-                $review->food = $foodRand;
-                $review->service = $serviceRand;
-                $review->cleanliness = $cleanlinessRand;
-                $review->value = $valueRand;
-                $review->occasion = $faker->randomElement(array_keys(Review::OCCASION));
-                $review->size = $faker->numberBetween(1, 11);
-                $review->comment = $faker->realText(200);
-                $review->created = DateTimeImmutable::createFromMutable($faker->dateTimeThisYear());
-                $this->entityManager->persist($review);
+                $item = new Item();
+                $item->collections = $collection;
+                $item->status = $status;
+                $item->guest = $faker->randomElement($members);
+                //$item->food = $foodRand;
+                //$item->service = $serviceRand;
+                //$item->cleanliness = $cleanlinessRand;
+                $item->price = $valueRand;
+                //$item->occasion = $faker->randomElement(array_keys(Item::OCCASION));
+                //$item->size = $faker->numberBetween(1, 11);
+                $item->name = $faker->realText(200);
+                //$item->created = DateTimeImmutable::createFromMutable($faker->dateTimeThisYear());
+                $this->entityManager->persist($item);
             }
 
-            $restaurants[] = $restaurant;
+            $collections[] = $collection;
         }
 
-        return $restaurants;
+        return $collections;
     }
+    */
 }
 
 // https://natedenlinger.com/php-random-number-generator-with-normal-distribution-bell-curve/

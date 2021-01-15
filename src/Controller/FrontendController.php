@@ -136,4 +136,65 @@ class FrontendController extends AbstractController
             "value" => Review::VALUE
         ]);
     }
+
+    /**
+     * @Route("/collections")
+     */
+    public function collections(): Response
+    {
+        $collections = $this->entityManager
+            ->createQuery('
+                SELECT COUNT(i.id) AS CollectionItemCount, c.name AS CollectionName, c.image AS CollectionImage, m.firstName AS CollectionOwner 
+                
+                FROM App:Item i 
+                    JOIN i.collection c 
+                    JOIN c.guest m 
+
+                GROUP BY c.name, c.image, m.firstName 
+                ORDER BY COUNT(i.id) DESC 
+            ')
+            ->getResult();
+
+        return $this->render('pages/collections.html.twig', [
+            "collections" => $collections,
+            "cuisine" => "",
+            "food" => "",
+            "service" => "",
+            "value" => "",
+            "cleanliness" => ""
+        ]);
+    }
+
+    /**
+     * @Route("/collections/{slug}")
+     */
+    public function collection(string $slug): Response
+    {
+        // Find all items in this collection
+        $items = $this->entityManager
+            ->createQuery('
+                SELECT i, m, c 
+                
+                FROM App:Item i 
+                    JOIN i.collection c 
+                    JOIN c.guest m 
+                
+                WHERE c.name = ?1
+            ')
+            ->setParameter(1, $slug)
+            ->setFirstResult(0)
+            ->setMaxResults(10)
+            ->getResult();
+
+        //dump( $items );
+        
+        if (!$items) {
+            throw $this->createNotFoundException('This collection does not exist.');
+        }
+
+        return $this->render('pages/collection.html.twig', [
+            "items" => $items,
+            "collection" => $slug
+        ]);
+    }
 }

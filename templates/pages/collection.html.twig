@@ -1,0 +1,76 @@
+{% extends 'main.html.twig' %}
+{% import "macros/rating.html.twig" as ma %}
+
+{% block title -%}
+    Collection “{{ collection }}”
+{%- endblock %}
+
+{% block content %}
+<article class="restaurant">
+    <table>
+        <tr>
+            <td colspan="2">
+                <h1>The {{ items[0].collection.name }} Collection</h1>
+            </td>
+            <td colspan="2">
+                <div></div>
+            </td>
+        </tr>
+        {#
+        <tr>
+            <th>Cuisine</th>
+            <td>{{ cuisine[restaurant.details.cuisine] }}</td>
+            <th>Rating</th>
+            <td>{{ restaurant.rating | round(2) }}%</td>
+        </tr>
+        <tr>
+            <th>Address</th>
+            <td>{{ restaurant.details.address }}</td>
+            <th>Quality of food</th>
+            <td>{{ restaurant.food | round(1) }}/5</td>
+        </tr>
+        <tr>
+            <th>Phone</th>
+            <td>{{ restaurant.details.phoneNumber }}</td>
+            <th>Service</th>
+            <td>{{ restaurant.service | round(1) }}/5</td>
+        </tr>
+        <tr>
+            <th>Website</th>
+            <td> <a href="{{ restaurant.details.website }}">{{ restaurant.details.website }}</a></td>
+            <th>Value for money</th>
+            <td>{{ restaurant.value | round(1) }}/5</td>
+        </tr>
+        <tr>
+            <th>E-mail</th>
+            <td><a href="mailto:{{ restaurant.details.email }}">{{ restaurant.details.email }}</a></td>
+            <th>Cleanliness</th>
+            <td>{{ restaurant.value | round(1) }}/5</td>
+        </tr>
+        #}
+    </table>
+
+    <h2>Items</h2>
+
+    <ul>
+        {% for item in items %}
+            <li>
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <td>{{ item.name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Price</th>
+                        <td>£{{ item.price|number_format(2) }}</td>
+                    </tr>
+                    <tr>
+                        <th>Status</th>
+                        <td>{{ item.status }}</td>
+                    </tr>
+                </table>
+            </li>
+        {% endfor %}
+    </ul>
+</article>
+{% endblock %}

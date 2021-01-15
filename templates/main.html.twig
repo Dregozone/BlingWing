@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
     <head>
-        <title>Scofe Restaurant Guide » {% block title -%}{%- endblock %}</title>
+        <title>{% block title -%}{%- endblock %} » Bling Wing Jewellery</title>
 
         <meta charset="utf-8">
         <meta httpequiv="x-ua-compatible" content="ie=edge">
@@ -23,14 +23,13 @@
             </div>
 
             <div class="logo">
-                <img src="/img/logo.webp" alt="Scofe — Restaurant Reviews" width="140" height="100">
+                <img src="/img/BlingWing.jpg" alt="Bling Wing Jewellery" width="140" height="100">
             </div>
 
             <nav>
                 <ul>
                     <li><a href="/">Home</a></li>
-                    <li><a href="/restaurants/">Restaurants</a></li>
-                    <li><a href="/review/">Write Review</a></li>
+                    <li><a href="/collections/">Collections</a></li>
 
                     {% if app.user and is_granted("ROLE_USER") %}
                         <li>|</li>
