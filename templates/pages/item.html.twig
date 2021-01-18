@@ -1,0 +1,22 @@
+{% extends 'main.html.twig' %}
+{% import "macros/rating.html.twig" as ma %}
+
+{% block title -%}
+    {{ item.name }}
+{%- endblock %}
+
+{% block content %}
+<article class="restaurant">
+    <table>
+        <tr>
+            <td colspan="2">
+                <h1>{{ item.name }}</h1>
+                <h2>Part of the <a href="/collections/{{ collection }}">{{ collection }}</a> collection by {{ item.collection.guest.firstName }} {{ item.collection.guest.lastName }}.</h2>
+            </td>
+            <td colspan="2">
+                <div></div>
+            </td>
+        </tr>
+    </table>
+</article>
+{% endblock %}

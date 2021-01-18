@@ -2,7 +2,7 @@
 {% import "macros/rating.html.twig" as ma %}
 
 {% block title -%}
-    Collection “{{ collection }}”
+    The {{ collection }} Collection
 {%- endblock %}
 
 {% block content %}
@@ -16,38 +16,6 @@
                 <div></div>
             </td>
         </tr>
-        {#
-        <tr>
-            <th>Cuisine</th>
-            <td>{{ cuisine[restaurant.details.cuisine] }}</td>
-            <th>Rating</th>
-            <td>{{ restaurant.rating | round(2) }}%</td>
-        </tr>
-        <tr>
-            <th>Address</th>
-            <td>{{ restaurant.details.address }}</td>
-            <th>Quality of food</th>
-            <td>{{ restaurant.food | round(1) }}/5</td>
-        </tr>
-        <tr>
-            <th>Phone</th>
-            <td>{{ restaurant.details.phoneNumber }}</td>
-            <th>Service</th>
-            <td>{{ restaurant.service | round(1) }}/5</td>
-        </tr>
-        <tr>
-            <th>Website</th>
-            <td> <a href="{{ restaurant.details.website }}">{{ restaurant.details.website }}</a></td>
-            <th>Value for money</th>
-            <td>{{ restaurant.value | round(1) }}/5</td>
-        </tr>
-        <tr>
-            <th>E-mail</th>
-            <td><a href="mailto:{{ restaurant.details.email }}">{{ restaurant.details.email }}</a></td>
-            <th>Cleanliness</th>
-            <td>{{ restaurant.value | round(1) }}/5</td>
-        </tr>
-        #}
     </table>
 
     <h2>Items</h2>
@@ -58,7 +26,11 @@
                 <table>
                     <tr>
                         <th>Name</th>
-                        <td>{{ item.name }}</td>
+                        <td>
+                            <a href="/collections/{{ collection }}/{{ item.name }}">
+                                {{ item.name }}
+                            </a>
+                        </td>
                     </tr>
                     <tr>
                         <th>Price</th>

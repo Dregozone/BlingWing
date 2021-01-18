@@ -197,4 +197,37 @@ class FrontendController extends AbstractController
             "collection" => $slug
         ]);
     }
+
+    /**
+     * @Route("/collections/{slug}/{slug2}")
+     */
+    public function item(string $slug, string $slug2): Response
+    {
+        // Find all items in this collection
+        $item = $this->entityManager
+            ->createQuery('
+                SELECT i, m, c 
+                
+                FROM App:Item i 
+                    JOIN i.collection c 
+                    JOIN c.guest m 
+                
+                WHERE i.name = ?1
+            ')
+            ->setParameter(1, $slug2)
+            ->setFirstResult(0)
+            ->setMaxResults(10)
+            ->getResult();
+
+        dump( $item );
+        
+        if (!$item) {
+            throw $this->createNotFoundException('This item does not exist.');
+        }
+
+        return $this->render('pages/item.html.twig', [
+            "item" => $item[0],
+            "collection" => $slug
+        ]);
+    }
 }
