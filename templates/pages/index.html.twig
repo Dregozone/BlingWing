@@ -11,30 +11,26 @@
     <div class="container home">
         <div class="row">
 
-            <div class="col">
+            <div class="col" style="margin-bottom: 2%;">
                 <div class="card">
                     <div class="card-header">
-                        <h3>10 Latest Reviews</h3>
+                        <h3>Most recent Collections</h3>
                     </div>
                     <ul class="list-group list-group-flush">
-                        {% for review in latestReviews %}
+                        {% for collection in latestCollections %}
                             <li class="list-group-item">
                                 <table>
                                     <tr>
-                                        <th>Author</th>
-                                        <td>{{ review.guest.name }}</td>
+                                        <th>Collection Name</th>
+                                        <td>
+                                            <a href="/collections/{{ collection.CollectionName }}">
+                                                {{ collection.CollectionName }}
+                                            </a>
+                                        </td>
                                     </tr>
                                     <tr>
-                                        <th>Date</th>
-                                        <td>{{ review.created | date("d/m/Y H:i") }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Restaurant</th>
-                                        <td><a href="restaurants/{{ review.restaurant.slug }}#{{ review.id }}">{{ review.restaurant.name }}</a></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Rating</th>
-                                        <td>food: {{ review.food }}/5, service {{ review.service }}/5, value for money {{ review.value }}/5, cleanliness {{ review.cleanliness }}/5</td>
+                                        <th>Image</th>
+                                        <td>{{ collection.CollectionImage }}</td>
                                     </tr>
                                 </table>
                             </li>
@@ -46,24 +42,24 @@
             <div class="col">
                 <div class="card">
                     <div class="card-header">
-                        <h3>Top 10 Restaurants</h3>
+                        <h3>Most recent Items</h3>
                     </div>
                     <ul class="list-group list-group-flush top10">
 
-                        {% for restaurant in topRestaurants %}
+                        {% for item in latestItems %}
                             <li class="list-group-item">
                                 <table>
                                     <tr>
-                                        <td><strong><a href="/restaurants/{{ restaurant.slug }}">{{ restaurant.name }}</a></strong></td>
-                                        <td rowspan="3">
-                                            {{ ma.rating(restaurant.rating) }}
-                                        </td>
+                                        <th>Item Name</th>
+                                        <td>{{ item.ItemName }}</td>
                                     </tr>
                                     <tr>
-                                        <td>Rating: {{ restaurant.rating | round(2) }}%</td>
+                                        <th>From collection</th>
+                                        <td>{{ item.CollectionName }}</td>
                                     </tr>
                                     <tr>
-                                        <td>Total reviews: {{ restaurant.total }}</td>
+                                        <th>Price</th>
+                                        <td>£{{ item.ItemPrice|number_format(2) }}</td>
                                     </tr>
                                 </table>
                             </li>

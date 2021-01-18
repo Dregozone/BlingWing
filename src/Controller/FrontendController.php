@@ -32,27 +32,50 @@ class FrontendController extends AbstractController
     public function index(): Response
     {
         // Find 10 most recently submit reviews
-        $latestReviews = $this->entityManager
+        $latestItems = $this->entityManager
             ->createQuery('
-                SELECT r
-                FROM App:Review r
-                WHERE r.status = :status
-                ORDER BY r.created DESC
+            SELECT 
+                i.name AS ItemName, 
+                i.price AS ItemPrice,
+                c.name AS CollectionName
+            
+            FROM App:Item i
+                JOIN i.collection c
+
+            ORDER BY i.dateAdded DESC 
+        ')
+        ->setFirstResult(0)
+        ->setMaxResults(3)
+        ->getResult();
+
+        //dump( $latestItems );
+
+        $latestCollections = $this->entityManager
+            ->createQuery('
+                SELECT 
+                    c.name AS CollectionName, 
+                    c.image AS CollectionImage
+                
+                FROM App:Collection c
+
+                ORDER BY c.dateAdded DESC 
             ')
-            ->setParameter("status", Review::STATUS_PUBLISHED)
             ->setFirstResult(0)
-            ->setMaxResults(10)
+            ->setMaxResults(3)
             ->getResult();
 
+        //dump( $latestCollections );
+
         return $this->render('pages/index.html.twig', [
-            "latestReviews" => $latestReviews,
-            "topRestaurants" => $this->getTopRestaurants([], 10)
+            "latestItems" => $latestItems,
+            "latestCollections" => $latestCollections
         ]);
     }
 
     /**
      * @Route("/restaurants")
      */
+    /*
     public function restaurants(Request $request): Response
     {
         $params = $this->fixRestaurantParams($request->query->all());
@@ -69,10 +92,12 @@ class FrontendController extends AbstractController
             "value" => Review::VALUE
         ]);
     }
+    */
 
     /**
      * @Route("/review")
      */
+    /*
     public function review(): Response
     {
         $restaurants = $this->entityManager->getRepository("App:Restaurant")->findAll();
@@ -86,10 +111,12 @@ class FrontendController extends AbstractController
             "value" => Review::VALUE
         ]);
     }
+    */
 
     /**
      * @Route("/restaurants/{slug}")
      */
+    /*
     public function restaurant(string $slug): Response
     {
         $restaurant = $this->createRestaurantBaseQueryBuilder()
@@ -136,6 +163,7 @@ class FrontendController extends AbstractController
             "value" => Review::VALUE
         ]);
     }
+    */
 
     /**
      * @Route("/collections")
@@ -219,7 +247,7 @@ class FrontendController extends AbstractController
             ->setMaxResults(10)
             ->getResult();
 
-        dump( $item );
+        //dump( $item );
         
         if (!$item) {
             throw $this->createNotFoundException('This item does not exist.');

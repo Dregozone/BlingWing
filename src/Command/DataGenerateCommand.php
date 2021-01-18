@@ -13,6 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Faker\Factory as FakerFactory;
 use DateTimeImmutable;
+use DateTime;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 
 class DataGenerateCommand extends Command
@@ -67,6 +68,7 @@ class DataGenerateCommand extends Command
             $member->lastName = $faker->name;
             $member->salt = base64_encode(\random_bytes(20));
             $member->password = base64_encode(\random_bytes(50));
+            $member->dateAdded = DateTimeImmutable::createFromMutable($faker->dateTimeThisYear());
             $member->type = $faker->randomElement([Member::TYPE_ANONYMOUS, Member::TYPE_SUBSCRIBER]);
             $this->entityManager->persist($member);
             $members[] = $member;
@@ -86,7 +88,8 @@ class DataGenerateCommand extends Command
             $item->name = $faker->name;
             $item->price = RAND(1, 100);
             $item->status = RAND(0,5);
-            $item->collection = $collections[0];
+            $item->collection = $collections[RAND(0, 4)];
+            $item->dateAdded = DateTimeImmutable::createFromMutable($faker->dateTimeThisYear());
             $this->entityManager->persist($item);
             $items[] = $item;
         }
@@ -105,6 +108,7 @@ class DataGenerateCommand extends Command
             $collection->name = $faker->name;
             $collection->guest = $members[0];
             $collection->image = $faker->name;
+            $collection->dateAdded = DateTimeImmutable::createFromMutable($faker->dateTimeThisYear());
             $this->entityManager->persist($collection);
             $collections[] = $collection;
         }

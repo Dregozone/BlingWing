@@ -8,6 +8,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
+use DateTimeImmutable;
 
 /**
  * An order.
@@ -44,6 +45,14 @@ class Collection implements CollectionInterface
     public $image;
 
     /**
+     * @var string Date when the rating was submitted.
+     *
+     * @ORM\Column(type="datetime_immutable", nullable=false)
+     * @Assert\NotNull
+     */
+    public $dateAdded;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Member")
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
@@ -52,6 +61,7 @@ class Collection implements CollectionInterface
     public function __construct()
     {
         //$this->items = new ArrayCollection();
+        $this->dateAdded = new DateTimeImmutable();
     }
 
     public function getId() : ?int

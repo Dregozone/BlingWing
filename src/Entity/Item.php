@@ -63,9 +63,17 @@ class Item implements ItemInterface
      */
     public $collection;
 
+    /**
+     * @var string Date when the rating was submitted.
+     *
+     * @ORM\Column(type="datetime_immutable", nullable=false)
+     * @Assert\NotNull
+     */
+    public $dateAdded;
+
     public function __construct()
     {
-        //
+        $this->dateAdded = new DateTimeImmutable();
     }
 
     public function getId() : ?int

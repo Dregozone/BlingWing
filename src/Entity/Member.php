@@ -9,6 +9,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
+use DateTimeImmutable;
 
 /**
  * A user.
@@ -102,6 +103,14 @@ class Member implements UserInterface
     public $password;
 
     /**
+     * @var string Date when the rating was submitted.
+     *
+     * @ORM\Column(type="datetime_immutable", nullable=false)
+     * @Assert\NotNull
+     */
+    public $dateAdded;
+
+    /**
      * @var Collection[]
      *
      * @ORM\OneToMany(targetEntity="Collection", mappedBy="guest", cascade={"persist", "remove"})
@@ -112,6 +121,7 @@ class Member implements UserInterface
     public function __construct()
     {
         $this->reviews = new ArrayCollection();
+        $this->dateAdded = new DateTimeImmutable();
     }
 
     public function getId() : ?string

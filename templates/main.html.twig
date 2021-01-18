@@ -15,11 +15,11 @@
     <body>
         <header>
             <div id="user">
-                {% if app.user and is_granted("ROLE_USER") %}
+                {#{% if app.user and is_granted("ROLE_USER") %}
                     Logged in as <strong>{{ app.user.name }}</strong>. <a class="logout" href="/logout">Logout</a>
                 {% else %}
                     <a href="/login">Login</a>
-                {% endif %}
+                {% endif %}#}
             </div>
 
             <div class="logo">
@@ -31,6 +31,7 @@
                     <li><a href="/">Home</a></li>
                     <li><a href="/collections/">Collections</a></li>
 
+                    {#
                     {% if app.user and is_granted("ROLE_USER") %}
                         <li>|</li>
                         {% if is_granted("ROLE_MODERATOR") %}
@@ -39,6 +40,7 @@
                             <li><a href="/stats">Stats</a></li>
                         {% endif %}
                     {% endif %}
+                    #}
                 </ul>
             </nav>
         </header>
@@ -47,6 +49,18 @@
             {% block content %}
             {% endblock %}
         </main>
+
+        <footer>
+            <div>
+                Contact | Terms of service 
+            </div>
+            <div>
+                Social media
+            </div>
+            <div>
+                &copy; Copyright 2021
+            </div>
+        </footer>
         <script type="text/javascript" src="/js/main.js"></script>
     </body>
 </html>
