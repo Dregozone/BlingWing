@@ -1,6 +1,6 @@
-# SEP Assigment Application
+# Bling Wing website
 
-This a Symfony application, using Doctrine as ORM, Twig for templating, API Platform for REST API and a few other libs.
+This a Symfony application, using Doctrine as ORM and Twig for templating.
 
 ## Setup
 
@@ -19,5 +19,3 @@ This a Symfony application, using Doctrine as ORM, Twig for templating, API Plat
 5. Run `bin/console app:import` to create the fake restaurants/reviews. /* This is now "bin/console app:data:generate" */
 6. Run `php -S localhost:8080 -t public`.
 7. Open http://localhost:8080 in your browser.
-
-Enjoy!
