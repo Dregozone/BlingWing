@@ -9,6 +9,7 @@
         <link rel="icon" href="/favicon.svg" type="image/svg">
 
         <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="/css/bootstrap.min.css">
         <link rel="stylesheet" href="/css/main.css">
     </head>
@@ -23,13 +24,13 @@
             </div>
 
             <div class="logo">
-                <img src="/img/BlingWing.jpg" alt="Bling Wing Jewellery" width="140" height="100">
+                <img src="/img/BlingWing.jpg" alt="Bling Wing Jewellery" width="140" height="50" class="logo">
             </div>
 
             <nav>
                 <ul>
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/collections/">Collections</a></li>
+                    <li><a href="/"><div class="btn btn-light">Home</div></a></li>
+                    <li><a href="/collections/"><div class="btn btn-light">Collections</div></a></li>
 
                     {#
                     {% if app.user and is_granted("ROLE_USER") %}
@@ -55,7 +56,10 @@
                 Contact | Terms of service 
             </div>
             <div>
-                Social media
+                <a href="#" class="fa fa-facebook"></a>
+                <a href="#" class="fa fa-twitter"></a>
+                <a href="#" class="fa fa-pinterest"></a>
+                <a href="#" class="fa fa-instagram"></a>
             </div>
             <div>
                 &copy; Copyright 2021
