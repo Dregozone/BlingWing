@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # BlingWing Jewelery website Catalog that showcases Jewelery items grouped into their collections.
+=======
+# Bling Wing website
+>>>>>>> b1422d2088807d29f0a1c65fa6a4aa61ffca0f37
 
 This a Symfony application, using Doctrine as ORM and Twig for templating.
 
