@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Restaurant;
 use App\Entity\Review;
@@ -22,14 +22,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
 use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class AdminController extends AbstractController
 {
-    /**
-     * @Route("/stats")
-     * @IsGranted("ROLE_ANALYST")
-     */
+    #[Route("/stats")]
+    #[IsGranted("ROLE_ANALYST")]
     public function stats(Request $request): Response
     {
         $params = $request->query->all();
@@ -40,7 +38,7 @@ class AdminController extends AbstractController
 
         $users = $this->entityManager->createQuery('
                 SELECT u.name AS name, u.email AS email, COUNT(r) AS num
-                FROM App:Review r
+                FROM App\Entity\Review r
                 JOIN r.guest u
                 WHERE r.created >= :from AND r.created <= :until AND r.status = :status
                 GROUP BY u.id
@@ -54,7 +52,7 @@ class AdminController extends AbstractController
 
         $reviews = $this->entityManager->createQuery('
                 SELECT r
-                FROM App:Review r
+                FROM App\Entity\Review r
                 ORDER BY r.created DESC')
             ->setFirstResult(0)
             ->setMaxResults(10)
@@ -62,7 +60,7 @@ class AdminController extends AbstractController
 
         $occasions = $this->entityManager->createQuery('
                 SELECT review.occasion AS name, SUM(review.occasion) AS sum
-                FROM App:Review review
+                FROM App\Entity\Review review
                 WHERE review.created >= :from AND review.created <= :until AND review.status = :status
                 GROUP BY review.occasion
                 ORDER BY sum DESC')
@@ -92,17 +90,15 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/moderation")
-     * @IsGranted("ROLE_MODERATOR")
-     */
+    #[Route("/moderation")]
+    #[IsGranted("ROLE_MODERATOR")]
     public function moderation(): Response
     {
-        $restaurants = $this->entityManager->getRepository("App:Restaurant")->findAll();
+        $restaurants = $this->entityManager->getRepository(Restaurant::class)->findAll();
 
         $reviews = $this->entityManager->createQuery('
                 SELECT rv
-                FROM App:Review rv
+                FROM App\Entity\Review rv
                 WHERE rv.status = :status
                 ORDER BY rv.created DESC')
             ->setParameter("status", Review::STATUS_PENDING)

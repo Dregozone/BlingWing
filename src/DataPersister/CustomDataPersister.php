@@ -2,70 +2,33 @@
 
 namespace App\DataPersister;
 
-use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
+use ApiPlatform\Metadata\Operation;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\State\ProcessorInterface;
 use App\Entity\Review;
 use App\Entity\User;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Security\Core\Security;
-use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
+use Symfony\Component\DependencyInjection\Attribute\AutowireDecorated;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * This is an "interceptor" for persistance operations on API objects
+ * This is an "interceptor" for persistance operations on API objects.
  *
- * @var [type]
+ * It decorates API Platform's Doctrine ORM persist processor (the successor
+ * of the Doctrine data persister this class used to decorate).
  */
-final class CustomDataPersister implements ContextAwareDataPersisterInterface
+#[AsDecorator('api_platform.doctrine.orm.state.persist_processor')]
+final class CustomDataPersister implements ProcessorInterface
 {
-    /**
-     * @var DataPersisterInterface
-     */
-    private $decorated;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * @var Security
-     */
-    private $security;
-
-    /**
-     * @var GuardAuthenticatorHandler
-     */
-    private $guardHandler;
-
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
-
     public function __construct(
-        ContextAwareDataPersisterInterface $decorated,
-        EntityManagerInterface $entityManager,
-        Security $security,
-        GuardAuthenticatorHandler $guardHandler,
-        RequestStack $requestStack
-    )
-    {
-        $this->decorated = $decorated;
-        $this->entityManager = $entityManager;
-        $this->security = $security;
-        $this->guardHandler = $guardHandler;
-        $this->requestStack = $requestStack;
+        #[AutowireDecorated]
+        private ProcessorInterface $decorated,
+        private Security $security,
+    ) {
     }
 
-    public function supports($data, array $context = []): bool
-    {
-        return $this->decorated->supports($data, $context);
-    }
-
-    public function persist($data, array $context = [])
+    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): mixed
     {
         $user = $this->security->getUser();
 
@@ -89,12 +52,10 @@ final class CustomDataPersister implements ContextAwareDataPersisterInterface
             $data->password = base64_encode(random_bytes(80));
 
             // "login" automatically
-            $token = new UsernamePasswordToken($data, null, 'main', $data->getRoles());
-            $request = $this->requestStack->getCurrentRequest();
-            $this->guardHandler->authenticateWithToken($token, $request);
+            $this->security->login($data, firewallName: 'main');
         }
 
-        elseif ($data instanceof Review && ($context["collection_operation_name"] ?? 0) === "post") {
+        elseif ($data instanceof Review && $operation instanceof Post) {
             if (!$user) {
                 throw new BadRequestHttpException("No user entity is available.");
             }
@@ -103,11 +64,6 @@ final class CustomDataPersister implements ContextAwareDataPersisterInterface
             $data->status = Review::STATUS_PENDING;
         }
 
-        return $this->decorated->persist($data, $context);
-    }
-
-    public function remove($data, array $context = [])
-    {
-        return $this->decorated->remove($data, $context);
+        return $this->decorated->process($data, $operation, $uriVariables, $context);
     }
 }

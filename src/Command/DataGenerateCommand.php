@@ -6,6 +6,7 @@ use App\Entity\Item;
 use App\Entity\Member;
 use App\Entity\Collection;
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -16,10 +17,9 @@ use DateTimeImmutable;
 use DateTime;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 
+#[AsCommand(name: 'app:data:generate')]
 class DataGenerateCommand extends Command
 {
-    protected static $defaultName = 'app:data:generate';
-
     /**
      * @var EntityManager
      */
@@ -37,7 +37,7 @@ class DataGenerateCommand extends Command
         $this->params = $params;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->entityManager->getConnection()->executeQuery("DELETE FROM collection");
         $this->entityManager->getConnection()->executeQuery("DELETE FROM item");

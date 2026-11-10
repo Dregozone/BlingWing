@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Restaurant;
 use App\Entity\Review;
@@ -22,13 +22,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
 use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class FrontendController extends AbstractController
 {
-    /**
-     * @Route("/")
-     */
+    #[Route("/")]
     public function index(): Response
     {
         // Find 10 most recently submit reviews
@@ -39,7 +37,7 @@ class FrontendController extends AbstractController
                 i.price AS ItemPrice,
                 c.name AS CollectionName
             
-            FROM App:Item i
+            FROM App\Entity\Item i
                 JOIN i.collection c
 
             ORDER BY i.dateAdded DESC 
@@ -56,7 +54,7 @@ class FrontendController extends AbstractController
                     c.name AS CollectionName, 
                     c.image AS CollectionImage
                 
-                FROM App:Collection c
+                FROM App\Entity\Collection c
 
                 ORDER BY c.dateAdded DESC 
             ')
@@ -100,7 +98,7 @@ class FrontendController extends AbstractController
     /*
     public function review(): Response
     {
-        $restaurants = $this->entityManager->getRepository("App:Restaurant")->findAll();
+        $restaurants = $this->entityManager->getRepository(Restaurant::class)->findAll();
 
         return $this->render('pages/review.html.twig', [
             "restaurants" => $restaurants,
@@ -138,7 +136,7 @@ class FrontendController extends AbstractController
                 SELECT
                     review, user
 
-                FROM App:Review review
+                FROM App\Entity\Review review
                     JOIN review.guest user
                     JOIN review.restaurant rest
 
@@ -165,16 +163,14 @@ class FrontendController extends AbstractController
     }
     */
 
-    /**
-     * @Route("/collections")
-     */
+    #[Route("/collections")]
     public function collections(): Response
     {
         $collections = $this->entityManager
             ->createQuery('
                 SELECT COUNT(i.id) AS CollectionItemCount, c.name AS CollectionName, c.image AS CollectionImage, m.firstName AS CollectionOwner 
                 
-                FROM App:Item i 
+                FROM App\Entity\Item i 
                     JOIN i.collection c 
                     JOIN c.guest m 
 
@@ -193,9 +189,7 @@ class FrontendController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/collections/{slug}")
-     */
+    #[Route("/collections/{slug}")]
     public function collection(string $slug): Response
     {
         // Find all items in this collection
@@ -203,7 +197,7 @@ class FrontendController extends AbstractController
             ->createQuery('
                 SELECT i, m, c 
                 
-                FROM App:Item i 
+                FROM App\Entity\Item i 
                     JOIN i.collection c 
                     JOIN c.guest m 
                 
@@ -226,9 +220,7 @@ class FrontendController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/collections/{slug}/{slug2}")
-     */
+    #[Route("/collections/{slug}/{slug2}")]
     public function item(string $slug, string $slug2): Response
     {
         // Find all items in this collection
@@ -236,7 +228,7 @@ class FrontendController extends AbstractController
             ->createQuery('
                 SELECT i, m, c 
                 
-                FROM App:Item i 
+                FROM App\Entity\Item i 
                     JOIN i.collection c 
                     JOIN c.guest m 
                 
