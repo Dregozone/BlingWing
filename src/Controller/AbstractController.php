@@ -4,8 +4,9 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as BaseAbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\Restaurant;
 use App\Entity\Review;
 use App\Entity\User;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -22,7 +23,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
 use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 abstract class AbstractController extends BaseAbstractController
 {
@@ -78,7 +79,7 @@ abstract class AbstractController extends BaseAbstractController
                 (AVG(rv.cleanliness) / :cleanlinessMax) * 1.5 +
                 (AVG(rv.value) / :valueMax)             * 1
             ) * 10 AS rating")
-            ->from("App:Restaurant", "rs")
+            ->from(Restaurant::class, "rs")
             ->join("rs.reviews", "rv", "WITH", "rv.restaurant = rs.id")
             ->where("rv.status = :status")
             ->groupBy("rs.id")

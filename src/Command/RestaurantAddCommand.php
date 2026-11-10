@@ -24,7 +24,7 @@ class RestaurantAddCommand extends Command
         $this->entityManager = $entityManager;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('app:restaurant:create')
@@ -38,7 +38,7 @@ class RestaurantAddCommand extends Command
             ->addArgument('website', InputArgument::REQUIRED);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $slugger = new AsciiSlugger();
         $restaurant = new Restaurant();

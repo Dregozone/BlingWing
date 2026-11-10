@@ -6,7 +6,7 @@ This a Symfony application, using Doctrine as ORM and Twig for templating.
 
 ### Prerequisites
 
-- You need at least PHP 7.3 (CLI) plus a few common PHP extensions.
+- You need at least PHP 8.4 (CLI) plus a few common PHP extensions.
 - You need a MySQL database.
 - You have to have `composer` installed.
 

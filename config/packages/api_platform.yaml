@@ -1,10 +1,21 @@
 api_platform:
     mapping:
         paths: [ '%kernel.project_dir%/src/Entity' ]
+    formats:
+        jsonld: [ 'application/ld+json' ]
+        json: [ 'application/json' ]
+        html: [ 'text/html' ]
+    docs_formats:
+        jsonld: [ 'application/ld+json' ]
+        jsonopenapi: [ 'application/vnd.openapi+json' ]
+        html: [ 'text/html' ]
     patch_formats:
         json: [ 'application/merge-patch+json' ]
+    serializer:
+        # Keep the "hydra:" prefix on collection keys (hydra:member, hydra:totalItems, ...)
+        # so JSON-LD responses look the same as they did on API Platform 2.
+        hydra_prefix: true
     swagger:
-        versions: [3]
         api_keys:
           apiKey:
             type: header
