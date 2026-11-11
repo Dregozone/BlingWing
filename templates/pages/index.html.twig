@@ -23,7 +23,7 @@
                                     <tr>
                                         <th>Collection Name</th>
                                         <td>
-                                            <a href="/collections/{{ collection.CollectionName }}">
+                                            <a href="/collections/{{ collection.CollectionName|url_encode }}">
                                                 {{ collection.CollectionName }}
                                             </a>
                                         </td>
@@ -31,7 +31,7 @@
                                     <tr>
                                         <th>Image</th>
                                         <td>
-                                            <img src="/img/jewelery/{{ collection.CollectionImage }}.jpg" class="jewelery" />
+                                            <img src="/img/jewelery/{{ collection.CollectionImage|url_encode }}.jpg" class="jewelery" />
                                         </td>
                                     </tr>
                                 </table>
