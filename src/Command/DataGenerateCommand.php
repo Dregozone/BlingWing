@@ -39,8 +39,8 @@ class DataGenerateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->entityManager->getConnection()->executeQuery("DELETE FROM collection");
         $this->entityManager->getConnection()->executeQuery("DELETE FROM item");
+        $this->entityManager->getConnection()->executeQuery("DELETE FROM collection");
         $this->entityManager->getConnection()->executeQuery("DELETE FROM member");
 
         $members = $this->createMembers();
