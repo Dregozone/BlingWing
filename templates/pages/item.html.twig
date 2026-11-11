@@ -11,7 +11,7 @@
         <tr>
             <td colspan="2">
                 <h1>{{ item.name }}</h1>
-                <h2>Part of the <a href="/collections/{{ collection }}">{{ collection }}</a> collection by {{ item.collection.guest.firstName }} {{ item.collection.guest.lastName }}.</h2>
+                <h2>Part of the <a href="/collections/{{ collection|url_encode }}">{{ collection }}</a> collection by {{ item.collection.guest.firstName }} {{ item.collection.guest.lastName }}.</h2>
             </td>
             <td colspan="2">
                 <div></div>

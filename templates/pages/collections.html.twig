@@ -80,10 +80,10 @@
                                         <table>
                                             <tr>
                                                 <th>Collection</th>
-                                                <td><a href="collections/{{ collection.CollectionName }}">{{ collection.CollectionName }}</a></td>
+                                                <td><a href="/collections/{{ collection.CollectionName|url_encode }}">{{ collection.CollectionName }}</a></td>
                                                 <td rowspan="6" class="slim">
                                                     <div class="productImage">
-                                                        <img src="/img/{{ collection.CollectionImage }}.webp" alt="{{ collection.CollectionImage }} - Product Image" width="140" height="100">
+                                                        <img src="/img/jewelery/{{ collection.CollectionImage|url_encode }}.jpg" alt="{{ collection.CollectionImage }} - Product Image" width="140" height="100">
                                                     </div>
                                                 </td>
                                             </tr>

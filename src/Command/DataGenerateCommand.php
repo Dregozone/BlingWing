@@ -80,18 +80,23 @@ class DataGenerateCommand extends Command
     private function createItems($collections) {
         $faker = FakerFactory::create("en_GB");
         $items = [];
+        $i = 1;
 
-        for ($i=1; $i < 50; $i++) {
+        // Give every collection a few items so no collection page is empty
+        foreach ($collections as $collection) {
+            $itemCount = random_int(2, 6);
 
-            $item = new Item();
-            $item->id = "fakeItem$i";
-            $item->name = $faker->name;
-            $item->price = RAND(1, 100);
-            $item->status = RAND(0,5);
-            $item->collection = $collections[RAND(0, 4)];
-            $item->dateAdded = DateTimeImmutable::createFromMutable($faker->dateTimeThisYear());
-            $this->entityManager->persist($item);
-            $items[] = $item;
+            for ($j = 0; $j < $itemCount; $j++, $i++) {
+                $item = new Item();
+                $item->id = "fakeItem$i";
+                $item->name = $faker->unique()->name;
+                $item->price = random_int(1, 100);
+                $item->status = random_int(0, 5);
+                $item->collection = $collection;
+                $item->dateAdded = DateTimeImmutable::createFromMutable($faker->dateTimeThisYear());
+                $this->entityManager->persist($item);
+                $items[] = $item;
+            }
         }
 
         return $items;
@@ -100,20 +105,40 @@ class DataGenerateCommand extends Command
     private function createCollections($members) {
         $faker = FakerFactory::create("en_GB");
         $collections = [];
+        $images = $this->getCollectionImages();
 
         for ($i=1; $i < 50; $i++) {
 
             $collection = new Collection();
             $collection->id = "fakeCollection$i";
-            $collection->name = $faker->name;
-            $collection->guest = $members[0];
-            $collection->image = $faker->name;
+            $collection->name = $faker->unique()->name;
+            $collection->guest = $faker->randomElement($members);
+            $collection->image = $faker->randomElement($images);
             $collection->dateAdded = DateTimeImmutable::createFromMutable($faker->dateTimeThisYear());
             $this->entityManager->persist($collection);
             $collections[] = $collection;
         }
 
         return $collections;
+    }
+
+    /**
+     * Image names (without extension) that exist in public/img/jewelery,
+     * as the templates render them as /img/jewelery/{image}.jpg
+     */
+    private function getCollectionImages(): array
+    {
+        $dir = $this->params->get('kernel.project_dir') . '/public/img/jewelery';
+        $images = array_map(
+            fn (string $path) => pathinfo($path, PATHINFO_FILENAME),
+            glob($dir . '/*.jpg') ?: []
+        );
+
+        if (!$images) {
+            throw new \RuntimeException("No collection images found in $dir");
+        }
+
+        return $images;
     }
 
     /*

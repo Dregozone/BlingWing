@@ -2,7 +2,7 @@
 {% import "macros/rating.html.twig" as ma %}
 
 {% block title -%}
-    The {{ collection }} Collection
+    The {{ collection.name }} Collection
 {%- endblock %}
 
 {% block content %}
@@ -10,7 +10,7 @@
     <table>
         <tr>
             <td colspan="2">
-                <h1 style="color: aliceblue;">The {{ items[0].collection.name }} Collection</h1>
+                <h1 style="color: aliceblue;">The {{ collection.name }} Collection</h1>
             </td>
             <td colspan="2">
                 <div></div>
@@ -27,7 +27,7 @@
                     <tr>
                         <th>Name</th>
                         <td>
-                            <a href="/collections/{{ collection }}/{{ item.name }}">
+                            <a href="/collections/{{ collection.name|url_encode }}/{{ item.name|url_encode }}">
                                 {{ item.name }}
                             </a>
                         </td>
@@ -42,6 +42,8 @@
                     </tr>
                 </table>
             </li>
+        {% else %}
+            <li style="color: aliceblue;">This collection has no items yet.</li>
         {% endfor %}
     </ul>
 </article>

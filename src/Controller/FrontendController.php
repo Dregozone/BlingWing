@@ -5,6 +5,7 @@ namespace App\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\Collection;
 use App\Entity\Restaurant;
 use App\Entity\Review;
 use App\Entity\User;
@@ -166,16 +167,17 @@ class FrontendController extends AbstractController
     #[Route("/collections")]
     public function collections(): Response
     {
+        // Start from the collection so collections without items are listed too
         $collections = $this->entityManager
             ->createQuery('
-                SELECT COUNT(i.id) AS CollectionItemCount, c.name AS CollectionName, c.image AS CollectionImage, m.firstName AS CollectionOwner 
-                
-                FROM App\Entity\Item i 
-                    JOIN i.collection c 
-                    JOIN c.guest m 
+                SELECT c.name AS CollectionName, c.image AS CollectionImage, m.firstName AS CollectionOwner, COUNT(i.id) AS CollectionItemCount
 
-                GROUP BY c.name, c.image, m.firstName 
-                ORDER BY COUNT(i.id) DESC 
+                FROM App\Entity\Collection c
+                    JOIN c.guest m
+                    LEFT JOIN App\Entity\Item i WITH i.collection = c
+
+                GROUP BY c.id, c.name, c.image, m.firstName
+                ORDER BY CollectionItemCount DESC, c.name ASC
             ')
             ->getResult();
 
@@ -192,61 +194,61 @@ class FrontendController extends AbstractController
     #[Route("/collections/{slug}")]
     public function collection(string $slug): Response
     {
+        $collection = $this->entityManager
+            ->getRepository(Collection::class)
+            ->findOneBy(["name" => $slug]);
+
+        if (!$collection) {
+            throw $this->createNotFoundException('This collection does not exist.');
+        }
+
         // Find all items in this collection
         $items = $this->entityManager
             ->createQuery('
-                SELECT i, m, c 
-                
-                FROM App\Entity\Item i 
-                    JOIN i.collection c 
-                    JOIN c.guest m 
-                
-                WHERE c.name = ?1
+                SELECT i
+
+                FROM App\Entity\Item i
+
+                WHERE i.collection = ?1
+
+                ORDER BY i.dateAdded DESC
             ')
-            ->setParameter(1, $slug)
+            ->setParameter(1, $collection)
             ->setFirstResult(0)
             ->setMaxResults(10)
             ->getResult();
 
-        //dump( $items );
-        
-        if (!$items) {
-            throw $this->createNotFoundException('This collection does not exist.');
-        }
-
         return $this->render('pages/collection.html.twig', [
             "items" => $items,
-            "collection" => $slug
+            "collection" => $collection
         ]);
     }
 
     #[Route("/collections/{slug}/{slug2}")]
     public function item(string $slug, string $slug2): Response
     {
-        // Find all items in this collection
+        // Find the item by name within this collection
         $item = $this->entityManager
             ->createQuery('
-                SELECT i, m, c 
-                
-                FROM App\Entity\Item i 
-                    JOIN i.collection c 
-                    JOIN c.guest m 
-                
-                WHERE i.name = ?1
+                SELECT i, m, c
+
+                FROM App\Entity\Item i
+                    JOIN i.collection c
+                    JOIN c.guest m
+
+                WHERE i.name = ?1 AND c.name = ?2
             ')
             ->setParameter(1, $slug2)
-            ->setFirstResult(0)
-            ->setMaxResults(10)
-            ->getResult();
+            ->setParameter(2, $slug)
+            ->setMaxResults(1)
+            ->getOneOrNullResult();
 
-        //dump( $item );
-        
         if (!$item) {
             throw $this->createNotFoundException('This item does not exist.');
         }
 
         return $this->render('pages/item.html.twig', [
-            "item" => $item[0],
+            "item" => $item,
             "collection" => $slug
         ]);
     }
